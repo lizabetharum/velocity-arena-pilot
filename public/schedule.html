@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/images/first.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity Arena — Schedule</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.week-section{margin-bottom:2.5rem;}
+.week-heading{font-size:1.125rem;font-weight:800;color:var(--white);margin-bottom:0.25rem;}
+.week-subtitle{font-size:0.875rem;color:var(--slate);margin-bottom:0.875rem;}
+.days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.625rem;}
+.day-card{background:var(--card-bg);border:0.09375rem solid var(--card-border);border-radius:0.625rem;padding:1rem 0.875rem;text-decoration:none;color:inherit;display:block;transition:border-color .15s;}
+.day-card:hover{border-color:var(--cyan);}
+.dc-num{font-size:1.375rem;font-weight:800;color:var(--white);margin-bottom:0.125rem;}
+.dc-day{font-size:0.6875rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin-bottom:0.5rem;}
+.dc-theme{font-size:0.8125rem;color:var(--slate);line-height:1.4;font-weight:500;}
+.dc-acts{font-size:0.75rem;color:var(--cyan);margin-top:0.5rem;font-weight:600;}
+
+.structure-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.5rem;margin-top:0.75rem;}
+.struct-block{background:var(--card-bg);border:0.09375rem solid var(--card-border);border-radius:0.5rem;padding:0.875rem 0.5rem;text-align:center;}
+.sb-time{font-size:0.6875rem;font-weight:700;color:var(--cyan);margin-bottom:0.25rem;}
+.sb-name{font-size:0.8125rem;font-weight:700;color:var(--white);}
+.sb-dur{font-size:0.6875rem;color:var(--slate);margin-top:0.125rem;}
+</style>
+</head>
+<body>
+<div id="site-header"></div>
+
+<main class="page-body">
+
+  <div id="schedule-grid">
+    <p style="color:var(--slate);font-size:1rem;">Loading schedule...</p>
+  </div>
+
+  <div style="margin-top:2.5rem;">
+    <div class="section-label">Daily structure — every day</div>
+    <div class="structure-grid">
+      <div class="struct-block">
+        <div class="sb-time">9:15</div>
+        <div class="sb-name">Hook</div>
+        <div class="sb-dur">25 min</div>
+      </div>
+      <div class="struct-block">
+        <div class="sb-time">9:40</div>
+        <div class="sb-name">Challenge Block</div>
+        <div class="sb-dur">52 min</div>
+      </div>
+      <div class="struct-block">
+        <div class="sb-time">10:32</div>
+        <div class="sb-name">Morning Open Lab</div>
+        <div class="sb-dur">58 min</div>
+      </div>
+      <div class="struct-block">
+        <div class="sb-time">12:00</div>
+        <div class="sb-name">Match-Build-Make</div>
+        <div class="sb-dur">90 min</div>
+      </div>
+      <div class="struct-block">
+        <div class="sb-time">1:30</div>
+        <div class="sb-name">Afternoon Open Lab</div>
+        <div class="sb-dur">55 min</div>
+      </div>
+      <div class="struct-block" style="border-color:var(--cyan);background:var(--navy3);">
+        <div class="sb-time">2:35</div>
+        <div class="sb-name">ENDS Ritual</div>
+        <div class="sb-dur">18 min</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;">
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;margin-bottom:0.375rem;">Hook</div>
+          <div style="font-size:0.875rem;color:var(--slate);line-height:1.65;">Builds trust, primes thinking. Improv activities, physical warm-ups, or provocative questions. No math yet.</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;margin-bottom:0.375rem;">Challenge Block</div>
+          <div style="font-size:0.875rem;color:var(--slate);line-height:1.65;">Facilitator launches in under 5 minutes, then steps back. Teams grapple for 20–25 minutes before any whole-class share-out.</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;margin-bottom:0.375rem;">ENDS Ritual</div>
+          <div style="font-size:0.875rem;color:var(--slate);line-height:1.65;">Runs every day without exception. Closes the day's arc. Protect it — do not compress it if the day runs long.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="/config.js"></script>
+<script src="/site.js"></script>
+<script src="/days.js"></script>
+<script>
+renderHeader('schedule');
+
+const campDates = buildCampDates();
+
+const weeks = [
+  { num: 1, name: 'Week 1', subtitle: 'Play Lab + Boot Camp' },
+  { num: 2, name: 'Week 2', subtitle: 'Season 1' },
+  { num: 3, name: 'Week 3', subtitle: 'Season 2 + Commissioner' },
+  { num: 4, name: 'Week 4', subtitle: 'Championship' },
+];
+
+const grid = document.getElementById('schedule-grid');
+grid.innerHTML = weeks.map(w => {
+  const days = DAYS.filter(d => d.week === w.num);
+  const cards = days.map(d => {
+    const actCount = d.activities ? d.activities.length : 0;
+    const weekday = campDayWeekday(campDates, d.day);
+    return `
+      <a class="day-card" href="/day.html?day=${d.day}">
+        <div class="dc-num">${d.day}</div>
+        <div class="dc-day">${weekday}</div>
+        <div class="dc-theme">${d.theme || ''}</div>
+        ${actCount ? `<div class="dc-acts">${actCount} activities</div>` : ''}
+      </a>`;
+  }).join('');
+
+  return `
+    <div class="week-section">
+      <div class="week-heading">${w.name} · ${w.subtitle}</div>
+      <div class="days-grid">${cards}</div>
+    </div>`;
+}).join('');
+</script>
+</body>
+</html>
